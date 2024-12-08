@@ -7,6 +7,7 @@ load_dotenv(find_dotenv())
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 ADMIN_IDS = os.getenv('ADMIN_IDS')
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 @dataclass

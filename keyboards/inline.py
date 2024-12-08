@@ -3,11 +3,17 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
+class ChannelstCallBack(CallbackData, prefix="user_chanels"):
+    channel_name: str | None = None
+    title: str | None = None
+
+
 def get_callback_btns(
     *,
     btns: dict[str, str],
     sizes: tuple[int] = (2,)
 ) -> InlineKeyboardBuilder:
+
     keyboard = InlineKeyboardBuilder()
 
     for text, data in btns.items():
@@ -36,8 +42,18 @@ BACK_TO_MAIN_MENU = get_callback_btns(
 # CHANNEL
 CHANNEL_MENU = get_callback_btns(
     btns={
-        "Добавить каналов": "add_channel",
+        "Добавить канал": "add_channel",
         "Управление списком каналов": "list_channel",
+    },
+    sizes=(2, ),
+)
+
+
+CHANNEL_LIST_MENU = get_callback_btns(
+    btns={
+        "Добавить канал": "add_channel",
+        "Управление списком каналов": "list_channel",
+        "Главное меню": "main_menu",
     },
     sizes=(2, ),
 )
@@ -78,3 +94,50 @@ POST_CHOISE_AFTER_ADD = get_callback_btns(
     },
     sizes=(2, ),
 )
+
+
+def get_channel_for_post_btns(
+    *,
+    channel_btns_str: str,
+    sizes: tuple[int] = (1, )
+    # sizes: list[str] = (1, ),
+):
+    keyboard = InlineKeyboardBuilder()
+
+    # keyboard.adjust(*sizes)
+    row = []
+    for text_in_list in channel_btns_str.split(" "):
+        text = text_in_list.split("/")
+        # text_var = None
+        if len(text) == 1:
+            continue
+        #     text_var = text[0]
+        # else:
+        if text[-1] == "0":
+            text_status = ""
+        elif text[-1] == "1":
+            text_status = " ✅"
+        elif text[-1] == "2":
+            text_status = " ❌"
+        new_text = f"{text[0]}{text_status}"
+        text_channel = text[0]
+        row.append(InlineKeyboardButton(
+            text=new_text,
+            callback_data=ChannelstCallBack(
+                channel_name=channel_btns_str,
+                title = text_channel
+            ).pack()))
+    row.append(InlineKeyboardButton(
+        text="Далее",
+        callback_data=ChannelstCallBack(
+            channel_name=channel_btns_str,
+            title="completed"
+        ).pack()))
+    row.append(InlineKeyboardButton(
+        text="Вернуться в главное меню",
+        callback_data="main_menu")
+    )
+
+    # keyboard.add(InlineKeyboardButton(text="Вернуться в главное меню", callback_data="main_menu"))
+
+    return keyboard.row(*row).adjust(*sizes).as_markup()

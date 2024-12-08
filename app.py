@@ -8,6 +8,7 @@ from aiogram.client.bot import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from config.config import Config, load_config
+from database.engine import create_db, drop_db
 from handlers import channel_handlers, other_handlers, post_handlers
 
 
@@ -22,7 +23,24 @@ bot = Bot(
 dp = Dispatcher()
 
 
+async def on_startup(bot):
+
+    # run_param = True
+    run_param = False
+    if run_param:
+        await drop_db()
+
+    await create_db()
+
+
+async def on_shutdown(bot):
+    print('бот лег')
+
+
 async def main():
+    dp.startup.register(on_startup)
+    dp.shutdown.register(on_shutdown)
+
     dp.include_router(channel_handlers.channel_router)
     dp.include_router(post_handlers.post_router)
     dp.include_router(other_handlers.other_router)
