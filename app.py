@@ -7,9 +7,11 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.client.bot import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from config.config import Config, load_config
 from database.engine import create_db, drop_db
 from handlers import channel_handlers, other_handlers, post_handlers
+from middlewares.apscheduler_midleware import SchedulerMiddleware
 
 
 
@@ -38,9 +40,14 @@ async def on_shutdown(bot):
 
 
 async def main():
+    scheduler = AsyncIOScheduler(timezone="Asia/Yekaterinburg")
+    scheduler.start()
     dp.startup.register(on_startup)
     dp.shutdown.register(on_shutdown)
 
+    dp.update.middleware(
+        SchedulerMiddleware(scheduler=scheduler),
+    )
     dp.include_router(channel_handlers.channel_router)
     dp.include_router(post_handlers.post_router)
     dp.include_router(other_handlers.other_router)

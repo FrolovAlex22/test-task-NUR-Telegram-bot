@@ -2,3 +2,5 @@ aiogram
 python-dotenv
 SQLAlchemy
 asyncpg
+apscheduler
+python-dateutil

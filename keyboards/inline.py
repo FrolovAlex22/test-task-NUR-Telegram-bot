@@ -69,6 +69,25 @@ CHANNEL_MENU_AFTER_ADD = get_callback_btns(
 )
 
 # POST
+def get_callback_hour_or_minute_btns(
+    # *,
+    type_time: str,
+    sizes: tuple[int] = (6,)
+) -> InlineKeyboardBuilder:
+
+    keyboard = InlineKeyboardBuilder()
+    if type_time == "hour":
+        for i in range(0, 24):
+            data = f"hour_{i}"
+            keyboard.add(InlineKeyboardButton(text=str(i), callback_data=data))
+    if type_time == "minute":
+        for i in range(0, 56, 5):
+            data = f"minute_{i}"
+            keyboard.add(InlineKeyboardButton(text=str(i), callback_data=data))
+
+    return keyboard.adjust(*sizes).as_markup()
+
+
 POST_MENU = get_callback_btns(
     btns={
         "Добавить пост": "add_post",
@@ -100,19 +119,14 @@ def get_channel_for_post_btns(
     *,
     channel_btns_str: str,
     sizes: tuple[int] = (1, )
-    # sizes: list[str] = (1, ),
-):
+) -> InlineKeyboardBuilder:
     keyboard = InlineKeyboardBuilder()
 
-    # keyboard.adjust(*sizes)
     row = []
     for text_in_list in channel_btns_str.split(" "):
         text = text_in_list.split("/")
-        # text_var = None
         if len(text) == 1:
             continue
-        #     text_var = text[0]
-        # else:
         if text[-1] == "0":
             text_status = ""
         elif text[-1] == "1":
@@ -137,7 +151,5 @@ def get_channel_for_post_btns(
         text="Вернуться в главное меню",
         callback_data="main_menu")
     )
-
-    # keyboard.add(InlineKeyboardButton(text="Вернуться в главное меню", callback_data="main_menu"))
 
     return keyboard.row(*row).adjust(*sizes).as_markup()

@@ -43,13 +43,13 @@ class Markup:
         title: str,
         days_header: List[InlineKeyboardButton],
         days: List[InlineKeyboardButton],
-        nav_buttons: List[InlineKeyboardButton]
+        # nav_buttons: List[InlineKeyboardButton]
     ) -> None:
         self.keyboard = InlineKeyboardBuilder
         self.title = title
         self.days_header = days_header
         self.days = days
-        self.nav_buttons = nav_buttons
+        # self.nav_buttons = nav_buttons
 
     @property
     def kb(self) -> InlineKeyboardBuilder:
@@ -60,7 +60,7 @@ class Markup:
         rows_with_days_numbers = list(zip_longest(*[iter(self.days)] * 7))
         for row in rows_with_days_numbers:
             keyboard.row(*row)
-        keyboard.row(*self.nav_buttons)
+        # keyboard.row(*self.nav_buttons)
         self.keyboard = keyboard.as_markup()
         return self.keyboard
 
@@ -73,19 +73,19 @@ class CalendarMarkup:
         self.month = month
         self.year = year
 
-    def next_month(self) -> Markup:
-        """Получение данных на следующий месяц."""
-        current_month = datetime.date(self.year, self.month, 5)
-        current_days_count = monthrange(self.year, self.month)[1]
-        next_date = current_month + datetime.timedelta(days=current_days_count)
-        return CalendarMarkup(next_date.month, next_date.year).build
+    # def next_month(self) -> Markup:
+    #     """Получение данных на следующий месяц."""
+    #     current_month = datetime.date(self.year, self.month, 5)
+    #     current_days_count = monthrange(self.year, self.month)[1]
+    #     next_date = current_month + datetime.timedelta(days=current_days_count)
+    #     return CalendarMarkup(next_date.month, next_date.year).build
 
-    def previous_month(self) -> Markup:
-        """Получение данных на предыдущий месяц."""
-        current_month = datetime.date(self.year, self.month, 5)
-        current_days_count = monthrange(self.year, self.month)[1]
-        next_date = current_month - datetime.timedelta(days=current_days_count)
-        return CalendarMarkup(next_date.month, next_date.year).build
+    # def previous_month(self) -> Markup:
+    #     """Получение данных на предыдущий месяц."""
+    #     current_month = datetime.date(self.year, self.month, 5)
+    #     current_days_count = monthrange(self.year, self.month)[1]
+    #     next_date = current_month - datetime.timedelta(days=current_days_count)
+    #     return CalendarMarkup(next_date.month, next_date.year).build
 
     def title(self) -> InlineKeyboardButton:
         """Создание заголовка календаря."""
@@ -121,16 +121,16 @@ class CalendarMarkup:
             ] * (7 - len(week_days) % 7)
         return week_days
 
-    def nav_buttons(self) -> List[InlineKeyboardButton]:
-        """Добавление кнопок для перемещения по календарю."""
-        return [
-            InlineKeyboardButton(
-                text="<", callback_data=f"back {self.month}.{self.year}"
-            ),
-            InlineKeyboardButton(
-                text=">", callback_data=f"next {self.month}.{self.year}"
-            ),
-        ]
+    # def nav_buttons(self) -> List[InlineKeyboardButton]:
+    #     """Добавление кнопок для перемещения по календарю."""
+    #     return [
+    #         InlineKeyboardButton(
+    #             text="<", callback_data=f"back {self.month}.{self.year}"
+    #         ),
+    #         InlineKeyboardButton(
+    #             text=">", callback_data=f"next {self.month}.{self.year}"
+    #         ),
+    #     ]
 
     @property
     def build(self) -> Markup:
@@ -139,5 +139,5 @@ class CalendarMarkup:
             self.title(),
             self.days_header(),
             self.days(),
-            self.nav_buttons(),
+            # self.nav_buttons(),
         )
