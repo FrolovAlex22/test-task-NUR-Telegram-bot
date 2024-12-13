@@ -49,13 +49,13 @@
    ```
    pip install -r requirements.txt
    ```
-4. Запуск программыЖ
+4. Запуск программы:
    ```
    python app.py
    ```
 
 ## Технологии:
-[![Python](https://img.shields.io/badge/python-3.11-blue?logo=python)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.12-blue?logo=python)](https://www.python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-blue?logo=PostgreSQL&logoColor=white)](https://www.postgresql.org/)
 [![Aiogram](https://img.shields.io/badge/Aiogram-blue)](https://aiogram.dev/)
 
