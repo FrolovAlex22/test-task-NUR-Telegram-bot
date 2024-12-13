@@ -1,13 +1,23 @@
 from aiogram import F, Bot, Router
-from aiogram.types import Message, CallbackQuery
-from aiogram.filters import Command, StateFilter, or_f
+from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from aiogram.types import Message, CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.engine import session_maker
-from database.methods import orm_add_channel, orm_delete_channel, orm_get_channels
-from keyboards.inline import BACK_TO_MAIN_MENU, CHANNEL_LIST_MENU, CHANNEL_MENU, CHANNEL_MENU_AFTER_ADD, get_callback_btns
+from database.methods import (
+    orm_add_channel,
+    orm_delete_channel,
+    orm_get_channels
+)
+from keyboards.inline import (
+    BACK_TO_MAIN_MENU,
+    CHANNEL_LIST_MENU,
+    CHANNEL_MENU,
+    CHANNEL_MENU_AFTER_ADD,
+    get_callback_btns
+)
 from lexicon.lexicon import LEXICON_CHANNEL
 from middlewares.db import DataBaseSession
 
@@ -29,6 +39,8 @@ class AddChannel(StatesGroup):
 
 @channel_router.callback_query(F.data == "channel_menu")
 async def channel_menu(callback: CallbackQuery):
+    """Переход в меню каналов"""
+    await callback.answer()
     await callback.message.edit_text(
         LEXICON_CHANNEL["channel_start"],
         reply_markup=CHANNEL_MENU
@@ -37,6 +49,7 @@ async def channel_menu(callback: CallbackQuery):
 
 @channel_router.callback_query(F.data == "add_channel")
 async def channel_add(callback: CallbackQuery, state: FSMContext):
+    """Начало добавления канала"""
     await callback.message.edit_text(
         LEXICON_CHANNEL["add_channel_name"], reply_markup=BACK_TO_MAIN_MENU
     )
@@ -45,6 +58,7 @@ async def channel_add(callback: CallbackQuery, state: FSMContext):
 
 @channel_router.message(StateFilter(AddChannel.name), ~F.text)
 async def wrong_add_channel(message: Message):
+    """Ошибка при добавлении канала"""
     await message.answer(
         LEXICON_CHANNEL["channel_name_error"],
         reply_markup=BACK_TO_MAIN_MENU
@@ -65,14 +79,14 @@ async def add_channel(
 
     if message.text in [
         channel.name for channel in await orm_get_channels(session)
-    ]: # Проверка на существующий канал
+    ]:  # Проверка на существующий канал
         await message.answer(
             LEXICON_CHANNEL["channel_name_exist"],
             reply_markup=BACK_TO_MAIN_MENU
         )
         return
 
-    try: # Проверка на администратора
+    try:  # Проверка на администратора
         await bot.get_chat_administrators(channel_name)
     except Exception:
         await message.answer(
@@ -91,7 +105,8 @@ async def add_channel(
 
 
 @channel_router.callback_query(F.data == "list_channel")
-async def channel_menu(callback: CallbackQuery, session: AsyncSession):
+async def list_channel(callback: CallbackQuery, session: AsyncSession):
+    """Список каналов"""
     await callback.answer()
     for channel in await orm_get_channels(session):
         await callback.message.answer(
@@ -115,7 +130,7 @@ async def channel_menu(callback: CallbackQuery, session: AsyncSession):
 async def delete_record_cb(
     callback: CallbackQuery, session: AsyncSession
 ) -> None:
-    """Удаляем запись"""
+    """Удаляем канал"""
     channel_id = callback.data.split("_")[-1]
     await orm_delete_channel(session, int(channel_id))
 

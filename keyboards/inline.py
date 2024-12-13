@@ -1,5 +1,5 @@
-from aiogram.types import InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
+from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
@@ -22,10 +22,11 @@ def get_callback_btns(
 
     return keyboard.adjust(*sizes).as_markup()
 
+
 # MAIN MENU
 MAIN_MENU = get_callback_btns(
     btns={
-        "Меню постов": "post_menu",
+        "Добавить пост": "add_post",
         "Меню каналов": "channel_menu",
     },
     sizes=(2, ),
@@ -68,6 +69,7 @@ CHANNEL_MENU_AFTER_ADD = get_callback_btns(
     sizes=(2, ),
 )
 
+
 # POST
 def get_callback_hour_or_minute_btns(
     # *,
@@ -97,24 +99,6 @@ POST_MENU = get_callback_btns(
 )
 
 
-POST_CHOISE_ADD_OR_NOT = get_callback_btns(
-    btns={
-        "Далее": "created_post",
-        "Отменить рассылку": "main_menu",
-    },
-    sizes=(2, ),
-)
-
-
-POST_CHOISE_AFTER_ADD = get_callback_btns(
-    btns={
-        "Создать рассылку": "add_post",
-        "Главное меню": "main_menu",
-    },
-    sizes=(2, ),
-)
-
-
 def get_channel_for_post_btns(
     *,
     channel_btns_str: str,
@@ -139,7 +123,7 @@ def get_channel_for_post_btns(
             text=new_text,
             callback_data=ChannelstCallBack(
                 channel_name=channel_btns_str,
-                title = text_channel
+                title=text_channel
             ).pack()))
     row.append(InlineKeyboardButton(
         text="Далее",
@@ -148,8 +132,26 @@ def get_channel_for_post_btns(
             title="completed"
         ).pack()))
     row.append(InlineKeyboardButton(
-        text="Вернуться в главное меню",
+        text="Отменить и вернуться в главное меню",
         callback_data="main_menu")
     )
 
     return keyboard.row(*row).adjust(*sizes).as_markup()
+
+
+POST_CHOISE_ADD_OR_NOT = get_callback_btns(
+    btns={
+        "Далее": "created_post",
+        "Отменить рассылку": "main_menu",
+    },
+    sizes=(2, ),
+)
+
+
+POST_CHOISE_AFTER_ADD = get_callback_btns(
+    btns={
+        "Создать рассылку": "add_post",
+        "Главное меню": "main_menu",
+    },
+    sizes=(2, ),
+)
